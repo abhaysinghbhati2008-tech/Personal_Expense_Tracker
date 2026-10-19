@@ -3,6 +3,7 @@
 #include<iostream>
 #include<vector>
 #include<limits>
+#include"Date.h"
 using namespace std;
 vector<Expense> Exp;
     int id = 0;
@@ -15,9 +16,15 @@ vector<Expense> Exp;
 
 void AddExpense(){
             double Amount;
-               string name ,discription;
+               string name ,discription , date;
                bool isfixed;
     //Adding expense with the error resolving when user enters something wrong 
+     while(true){
+     
+        cout<<"Enter the name :";
+        if(getline(cin , name) && !name.empty()) break;
+        Catch();
+    }
     while(true){
 
         cout<<"Enter the Amount :";
@@ -33,11 +40,14 @@ void AddExpense(){
 
     }
     // make it in a separete function for all three inputs
+    
+    //  for the date input but before that i have to make a vaildation function to check whether 
+    //  the string enters is correct or not
     while(true){
-     
-        cout<<"Enter the name :";
-        if(getline(cin , name) && !name.empty()) break;
-        Catch();
+        cout<<"Enter the Date (YYYY-MM-DD) : ";
+        cin>>date;
+        if(IsValid(date)) break;
+        cout<<"Invaild Input Try again";
     }
     while(true){
      
@@ -78,12 +88,14 @@ void AddExpense(){
     e.id = ++id;
     e.IsFixed = isfixed;
     e.frequency = frequency;
+    e.Date = date;
      
     Exp.push_back(e);
     cout<<"Expense added Successfully \n";
      cout<<"Name = "<<e.name<<endl;
     cout<<"Amount = "<<e.amount<<endl;
     cout<<"ID = "<<e.id<<endl;
+    cout<<"Date ="<<e.Date<<endl;
     cout<<"isFixed = ";
     if(isfixed){
          cout<<"YES"<<endl;
@@ -94,14 +106,6 @@ void AddExpense(){
 
 
 }
-// trying adding the total function 
- void Total(){
-    long long sum = 0;
-    for(auto a : Exp){
-        sum += a.amount;
-    }
-    cout<<"Total Amount is : "<<sum<<endl;
 
- }
 
 

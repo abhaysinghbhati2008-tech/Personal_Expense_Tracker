@@ -1,6 +1,6 @@
 #pragma once
 #include<string>
-class Expense{
+struct Expense{
     public:
     int id;
     std::string Date; //date 
@@ -9,4 +9,5 @@ class Expense{
     bool IsFixed; // check if this is fixed or not
     std::string frequency; //like weekly monthly or daily
     std::string Discritpion;
+    std::string Date;
 };
