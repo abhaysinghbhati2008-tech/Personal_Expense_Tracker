@@ -7,7 +7,7 @@ using namespace std;
 vector<Expense> Exp;
     int id = 0;
         void Catch(){
-            cout<<"Invaild Input enter again";
+            cout<<"Invaild Input enter again"<<endl;
          cin.clear();
         // numeric_limits<streamsize>::max() used to clear the all the input the user enters
         cin.ignore(numeric_limits<streamsize>::max() , '\n');
@@ -20,7 +20,7 @@ void AddExpense(){
     //Adding expense with the error resolving when user enters something wrong 
     while(true){
 
-        cout<<"Enter the Amount";
+        cout<<"Enter the Amount :";
         if(cin >> Amount && Amount > 0){
             cin.ignore(numeric_limits<streamsize>::max() , '\n');
             break;
@@ -35,20 +35,20 @@ void AddExpense(){
     // make it in a separete function for all three inputs
     while(true){
      
-        cout<<"Enter the name";
+        cout<<"Enter the name :";
         if(getline(cin , name) && !name.empty()) break;
         Catch();
     }
     while(true){
      
-        cout<<"enter the Discription";
+        cout<<"enter the Discription :";
         if(getline(cin , discription) && !discription.empty()) break;
         Catch();
     }
     // isfixed
     while(true){
         string choice;
-        cout<<"Is this a Fixed Expense (yes/no)";
+        cout<<"Is this a Fixed Expense (yes/no) ";
         cin >> choice;
         if(choice == "yes" || choice == "Yes" || choice == "YES"){
             isfixed = true;
@@ -63,7 +63,7 @@ void AddExpense(){
     string frequency = "none";
     if(isfixed){
         while(true){
-            cout<<"enter the frequency Monthly / Weekly / Daily";
+            cout<<"enter the frequency Monthly / Weekly / Daily : ";
             cin>>frequency;
             if(frequency == "Monthly"
             || frequency == "Weekly"
@@ -83,14 +83,25 @@ void AddExpense(){
     cout<<"Expense added Successfully \n";
      cout<<"Name = "<<e.name<<endl;
     cout<<"Amount = "<<e.amount<<endl;
-    cout<<"ID = "<<e.id;
+    cout<<"ID = "<<e.id<<endl;
     cout<<"isFixed = ";
     if(isfixed){
-         cout<<"YES";
+         cout<<"YES"<<endl;
          cout<<"Frequncy = "<<e.frequency;
     }
     else cout<<"NO";
     cout<<endl;
 
+
 }
+// trying adding the total function 
+ void Total(){
+    long long sum = 0;
+    for(auto a : Exp){
+        sum += a.amount;
+    }
+    cout<<"Total Amount is : "<<sum<<endl;
+
+ }
+
 
