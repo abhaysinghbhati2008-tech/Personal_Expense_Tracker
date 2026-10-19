@@ -8,5 +8,5 @@ class Expense{
     double amount;  //amount 
     bool IsFixed; // check if this is fixed or not
     std::string frequency; //like weekly monthly or daily
-
+    
 };
