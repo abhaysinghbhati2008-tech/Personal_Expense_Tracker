@@ -1,98 +1,77 @@
-#include<iostream>
-using namespace std;
-#include<string>
-#include<sstream>
-#include<cctype>
-struct Date{
-    public:
-    int day;
-    int month;
-    int year;
+#pragma once
+
+#include <string>
+
+struct Date {
+    int day = 0;
+    int month = 0;
+    int year = 0;
 };
 
-// vaildation function for a given string 
-bool IsValid(const string& date){
-    if(date.size() != 10) return false;// checks that is it in the formate of YYYY-MM-DD
-    // if(date[4] != '-' || date[7] != '-') return; //checks for the dashes this can checked by the stringstream
-    // but by this we dont hvae to rely on the prase string 
-    if(date[4] != '-' || date[7] != '-') return false;
-    // this loop checks for teh last word like 2026-10-1a so it checks for the a 
-    for(int i =0 ;i<date.size();i++){
-        if(i == 4 || i == 7) continue;
-        // if(!isdigit(date[i])) return false; 
-        /*
-        beacuse isdigit function works by looking the asii valuse and its made for only +ve interger 
-        but when it get -ve it get confused
-        eg when user enters this    2024-05-1€
-        € -- this get mroe them 127 and them a signed char treat it like a -ve number. and that can 
-        cause this trouble 
-
-        to solve this we use ungined char 
-        */
-       if(!isdigit(static_cast<unsigned char>(date[i]))) return false;
+inline bool IsValid(const std::string& date) {
+    if (date.size() != 10 || date[4] != '-' || date[7] != '-') {
+        return false;
     }
-    int year , day, month;
-    char dash1 , dash2;
-    stringstream ss(date);
-    ss >>year>>dash1>>month>>dash2>>day;
-    if(ss.fail() || dash1 != '-' || dash2 != '-') return false;
-    if(year < 2000 || year > 2100) return false;
-    if(month < 1 || month > 12) return false;
-    if(day < 1 || day > 31) return false;
 
-    // cehcking for the leap year
-    int DaysInMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    if((year%4 == 0 && year%100 != 0) || year%400 == 0){
-        DaysInMonth[1] = 29;
+    for (std::size_t i = 0; i < date.size(); ++i) {
+        if (i != 4 && i != 7 &&
+            (date[i] < '0' || date[i] > '9')) {
+            return false;
+        }
     }
-    if(day > DaysInMonth[month -1]) return false;
-     
-    return true;
+
+    const int year = std::stoi(date.substr(0, 4));
+    const int month = std::stoi(date.substr(5, 2));
+    const int day = std::stoi(date.substr(8, 2));
+    if (year < 1 || month < 1 || month > 12) {
+        return false;
+    }
+
+    const int daysInMonth[] = {31, 28, 31, 30, 31, 30,
+                               31, 31, 30, 31, 30, 31};
+    int maximumDay = daysInMonth[month - 1];
+    if (month == 2 &&
+        ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0)) {
+        maximumDay = 29;
+    }
+    return day >= 1 && day <= maximumDay;
 }
 
-Date stringtodate(const string& date) {
-    Date ans;
+inline Date stringtodate(const std::string& date) {
     if (!IsValid(date)) {
-        return ans; // returns zero
+        return {};
     }
-    int year, month, day;
-    char dash1, dash2;
-
-    stringstream ss(date);
-
-    ss >> year >> dash1 >> month >> dash2 >> day;
-
-    ans.day = day;
-    ans.year = year;
-    ans.month = month;
-
-    return ans;
-}
-// date  -- > string to write in the file
-string datetostring(const Date& date){
-    string year = to_string(date.year);
-    string month = ((date.month >= 10) ? "" : "0") + to_string(date.month);
-    string day = ((date.day >= 10) ? "" : "0") + to_string(date.day);
-    return year +"-"+month+"-"+day;
+    return {std::stoi(date.substr(8, 2)), std::stoi(date.substr(5, 2)),
+            std::stoi(date.substr(0, 4))};
 }
 
-// string to date.
-bool IsSame(const Date& d1 , const Date& d2){
-    return (d1.day == d2.day && d1.month == d2.month && d1.year == d2.year);
+inline std::string datetostring(const Date& date) {
+    std::string year = std::to_string(date.year);
+    std::string month = date.month < 10 ? "0" + std::to_string(date.month)
+                                        : std::to_string(date.month);
+    std::string day = date.day < 10 ? "0" + std::to_string(date.day)
+                                    : std::to_string(date.day);
+    if (year.size() < 4) {
+        year.insert(0, 4 - year.size(), '0');
+    }
+    return year + "-" + month + "-" + day;
 }
 
-// check for isbefore 
-bool isBefore(const Date& d1, const Date& d2) {
-    if (d1.year != d2.year)
-        return d1.year < d2.year;
-
-    if (d1.month != d2.month)
-        return d1.month < d2.month;
-
-    return d1.day < d2.day;
+inline bool IsSame(const Date& first, const Date& second) {
+    return first.day == second.day && first.month == second.month &&
+           first.year == second.year;
 }
 
-//check for is after 
-bool isAfter(const Date& d1, const Date& d2) {
-    return !isBefore(d1, d2) && !IsSame(d1, d2);
+inline bool isBefore(const Date& first, const Date& second) {
+    if (first.year != second.year) {
+        return first.year < second.year;
+    }
+    if (first.month != second.month) {
+        return first.month < second.month;
+    }
+    return first.day < second.day;
+}
+
+inline bool isAfter(const Date& first, const Date& second) {
+    return !isBefore(first, second) && !IsSame(first, second);
 }
